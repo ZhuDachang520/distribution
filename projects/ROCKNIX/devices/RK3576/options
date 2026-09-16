@@ -87,3 +87,7 @@
 
   # Disk Swap
     SWAP_FILE_SIZE="0"
+
+  # Cap the storage partition at this size on first boot and create an
+  # exFAT GAMES partition from the remaining space (e.g. "10G")
+    STORAGE_MAX_SIZE="10G"
