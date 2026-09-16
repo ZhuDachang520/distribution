@@ -46,6 +46,7 @@ function do_mkimage() {
     SYSTEM_SIZE="${SYSTEM_SIZE}" \
     SYSTEM_PART_START="${SYSTEM_PART_START}" \
     STORAGE_SIZE="${STORAGE_SIZE:-32}" \
+    STORAGE_MAX_SIZE="${STORAGE_MAX_SIZE}" \
     OVA_SIZE="${OVA_SIZE}" \
     SUBDEVICE="${SUBDEVICE}" \
     ${SCRIPTS}/mkimage

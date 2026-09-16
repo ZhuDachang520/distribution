@@ -236,6 +236,12 @@ elif [ "${BOOTLOADER}" = "u-boot" ]; then
   mcopy "${RELEASE_DIR}/target/KERNEL.md5" "::/${KERNEL_NAME}.md5" >"${SAVE_ERROR}" 2>&1 || show_error
   mcopy "${RELEASE_DIR}/target/SYSTEM.md5" ::/SYSTEM.md5 >"${SAVE_ERROR}" 2>&1 || show_error
 
+  if [ -n "${STORAGE_MAX_SIZE}" ]; then
+    echo "image: creating storage resize marker... (${STORAGE_MAX_SIZE})"
+    touch "${IMG_TMP}/resize_storage_${STORAGE_MAX_SIZE}"
+    mcopy "${IMG_TMP}/resize_storage_${STORAGE_MAX_SIZE}" :: >"${SAVE_ERROR}" 2>&1 || show_error
+  fi
+
 elif [ "${BOOTLOADER}" = "arm-efi" ]; then
   # create bootloader configuration
   echo "image: creating bootloader configuration... (arm-efi)"
