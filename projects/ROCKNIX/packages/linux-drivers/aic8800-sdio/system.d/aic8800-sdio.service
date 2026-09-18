@@ -1,0 +1,13 @@
+[Unit]
+Description=AIC8800 SDIO WiFi
+After=systemd-modules-load.service
+Before=network.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+ExecStart=/usr/sbin/modprobe aic8800_bsp
+ExecStart=/usr/sbin/modprobe aic8800_fdrv
+
+[Install]
+WantedBy=multi-user.target
