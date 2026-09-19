@@ -1,0 +1,4 @@
+# The AIC8800 Bluetooth half is wired to uart7. Its DT alias is serial7, but
+# with CONFIG_SERIAL_8250_NR_UARTS=5 the port is registered as ttyS1, so match
+# the platform device rather than the unstable ttyS index.
+SUBSYSTEM=="tty", KERNELS=="2ada0000.serial", SYMLINK+="ttyBT"

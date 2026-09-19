@@ -33,8 +33,12 @@ makeinstall_target() {
 
   mkdir -p ${INSTALL}/usr/lib/systemd/system
   cp ${PKG_DIR}/system.d/*.service ${INSTALL}/usr/lib/systemd/system
+
+  mkdir -p ${INSTALL}/usr/lib/udev/rules.d
+  cp ${PKG_DIR}/udev.d/*.rules ${INSTALL}/usr/lib/udev/rules.d
 }
 
 post_install() {
   enable_service aic8800-sdio.service
+  enable_service aic8800-bt.service
 }

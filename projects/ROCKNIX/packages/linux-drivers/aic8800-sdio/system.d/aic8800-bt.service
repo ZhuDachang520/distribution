@@ -1,0 +1,18 @@
+[Unit]
+Description=AIC8800 Bluetooth HCI attach
+After=aic8800-sdio.service
+Requires=aic8800-sdio.service
+Before=bluetooth.service
+# /dev/ttyBT is created by udev, which may race the first start.
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+ExecStartPre=/usr/sbin/modprobe bluetooth
+ExecStartPre=/usr/sbin/modprobe hci_uart
+ExecStart=/usr/bin/btattach -B /dev/ttyBT -S 1500000 -P h4
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target
