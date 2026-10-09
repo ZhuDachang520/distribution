@@ -129,7 +129,7 @@ To use NFS, create the following file:
 $CONFIG_FILE
 
 Add a single line pointing to your NFS share.
-IMPORTANT: The share MUST contain a 'roms' folder!
+IMPORTANT: Game folders must live directly at the root of the share!
 
 Examples:
 NFS_PATH=192.168.1.5:/volume1/retro_games
@@ -183,9 +183,9 @@ fi
 log_msg "NFS mounted successfully."
 
 # Prepare Overlay Directories
-WORK_DIR="/storage/games-${UPPER}/.tmp/games-workdir"
-UPPER_DIR="/storage/games-${UPPER}/roms"
-LOWER_DIR="/storage/games-${LOWER}/roms"
+WORK_DIR="/storage/.tmp/games-workdir"
+UPPER_DIR="/storage/games-${UPPER}"
+LOWER_DIR="/storage/games-${LOWER}"
 
 mkdir -p "$WORK_DIR"
 mkdir -p "$UPPER_DIR"

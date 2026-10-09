@@ -10,7 +10,7 @@ source /etc/profile
 set_kill set "-9 steam FEX"
 
 STEAM="${STEAM:-/storage/.local/share/Steam}"
-STEAM_GAMES_ROOT="${STEAM_GAMES_ROOT:-/storage/games-internal/roms/steam}"
+STEAM_GAMES_ROOT="${STEAM_GAMES_ROOT:-/storage/games-internal/steam}"
 STEAM_DOT="${STEAM_DOT:-/storage/.steam}"
 APPLICATIONS="${APPLICATIONS:-/storage/.local/share/applications}"
 FEX_DATA="/storage/.local/share/fex-emu"

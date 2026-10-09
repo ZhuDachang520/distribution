@@ -6,7 +6,7 @@
 source /etc/profile
 
 STEAM="${STEAM:-/storage/.local/share/Steam}"
-STEAM_GAMES_ROOT="${STEAM_GAMES_ROOT:-/storage/games-internal/roms/steam}"
+STEAM_GAMES_ROOT="${STEAM_GAMES_ROOT:-/storage/games-internal/steam}"
 STEAM_DOT="${STEAM_DOT:-/storage/.steam}"
 APPLICATIONS="${APPLICATIONS:-/storage/.local/share/applications}"
 
