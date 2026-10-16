@@ -31,7 +31,7 @@
 		stdout-path = "serial0:1500000n8";
 	};
 
-	/* SARADC_VIN1_KEY_RECOVERY, 100R divider */
+	/* SARADC_VIN1_KEY_RECOVERY: idles ~1.79V, button pulls to ~0.05V */
 	adc_keys_volup: adc-keys-volup {
 		compatible = "adc-keys";
 		io-channels = <&saradc 1>;
@@ -47,11 +47,23 @@
 	};
 
 	/*
-	 * Volume down (SARADC_VIN2_HW_ID) is not exposed via adc-keys: the
-	 * HW_ID net idles below the keyup threshold, so the driver reports
-	 * VOLUMEDOWN held from boot and the initramfs enters USB mass-storage
-	 * recovery mode. Re-add once idle/pressed voltages are measured.
+	 * HW_ID net idles at ~0.15V and the button pulls it to 0V, so the
+	 * thresholds stay below the idle level; a 1.8V keyup threshold makes
+	 * the driver report the key held at boot and hangs the initramfs.
 	 */
+	adc_keys_voldown: adc-keys-voldown {
+		compatible = "adc-keys";
+		io-channels = <&saradc 2>;
+		io-channel-names = "buttons";
+		keyup-threshold-microvolt = <130000>;
+		poll-interval = <60>;
+
+		button-voldown {
+			label = "VOLUMEDOWN";
+			linux,code = <KEY_VOLUMEDOWN>;
+			press-threshold-microvolt = <20000>;
+		};
+	};
 
 	reserved-memory {
 		#address-cells = <2>;
