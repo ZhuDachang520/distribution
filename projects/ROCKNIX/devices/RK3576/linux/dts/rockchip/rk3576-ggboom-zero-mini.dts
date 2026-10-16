@@ -46,20 +46,12 @@
 		};
 	};
 
-	/* SARADC_VIN2_HW_ID, 100R divider */
-	adc_keys_voldown: adc-keys-voldown {
-		compatible = "adc-keys";
-		io-channels = <&saradc 2>;
-		io-channel-names = "buttons";
-		keyup-threshold-microvolt = <1800000>;
-		poll-interval = <60>;
-
-		button-voldown {
-			label = "VOLUMEDOWN";
-			linux,code = <KEY_VOLUMEDOWN>;
-			press-threshold-microvolt = <1750>;
-		};
-	};
+	/*
+	 * Volume down (SARADC_VIN2_HW_ID) is not exposed via adc-keys: the
+	 * HW_ID net idles below the keyup threshold, so the driver reports
+	 * VOLUMEDOWN held from boot and the initramfs enters USB mass-storage
+	 * recovery mode. Re-add once idle/pressed voltages are measured.
+	 */
 
 	reserved-memory {
 		#address-cells = <2>;
