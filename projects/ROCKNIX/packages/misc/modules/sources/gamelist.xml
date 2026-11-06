@@ -169,19 +169,6 @@
         <image>./images/heroic.svg</image>
     </game>
     <game>
-        <path>./Start AetherSX2.sh</path>
-        <name>Start AetherSX2</name>
-        <desc>Opens the AetherSX2 GUI (PS2) to enable global configuration changes to be made directly to the emulator. It's recommended to have a mouse 
-and keyboard to modify settings.</desc>
-        <developer>ROCKNIX</developer>
-        <publisher>ROCKNIX</publisher>
-        <rating>5.0</rating>
-        <releasedate>2021</releasedate>
-        <genre>Emulator</genre>
-        <players>1</players>
-        <image>./images/aethersx2.svg</image>
-    </game>
-    <game>
         <path>./Start Azahar.sh</path>
         <name>Start Azahar</name>
         <desc>Opens the Azahar GUI (3DS) to enable global configuration changes to be made directly to the emulator. Although mouse control is enabled via gptokeyb, 
@@ -389,7 +376,7 @@ it's recommended to have a mouse and keyboard to modify settings.</desc>
     <game>
         <path>./Start touchHLE.sh</path>
         <name>Start touchHLE</name>
-        <desc>Opens the touchHLE GUI (iOS) to enable global configuration changes to be made directly to the emulator. It's recommended to have a mouse and keyboard available to modify settings. A free and open-source application that emulates iOS games compatible with iOS 2 & 3, enabling people to play their iOS games on Windows, macOS, and Linux systems.</desc>
+        <desc>Opens the touchHLE GUI (iOS) to enable global configuration changes to be made directly to the emulator. It's recommended to have a mouse and keyboard available to modify settings. A free and open-source application that emulates iOS games compatible with iOS 2 &amp; 3, enabling people to play their iOS games on Windows, macOS, and Linux systems.</desc>
         <developer>ROCKNIX</developer>
         <publisher>ROCKNIX</publisher>
         <rating>5.0</rating>

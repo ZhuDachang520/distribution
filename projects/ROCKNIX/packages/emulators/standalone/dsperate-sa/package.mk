@@ -2,8 +2,8 @@
 # Copyright (C) 2026-present ROCKNIX (https://github.com/ROCKNIX)
 
 PKG_NAME="dsperate-sa"
-PKG_VERSION="3.0.2"
-PKG_SHA256="6792d96b303f48d99bea925544f550bd9a217f06b2249a605e3c90c9aaa559a6"
+PKG_VERSION="3.3.0"
+PKG_SHA256="03ed23d031d7b8dc4fe3561b45cf3154d6e5b2291ccfddfb9ab2ae26d4b5ad9f"
 PKG_LICENSE="GPL-3.0-or-later"
 PKG_SITE="https://github.com/beebono/DSperate"
 PKG_URL="${PKG_SITE}/releases/download/v${PKG_VERSION}/dsperate-v${PKG_VERSION}-linux-${TARGET_ARCH}.tar.gz"
@@ -18,7 +18,7 @@ makeinstall_target() {
     cp -a ${PKG_DIR}/scripts/* ${INSTALL}/usr/bin
 
   case ${DEVICE} in
-    RK3576|SM4450|SM6115|SM8250|SM8550|SM8650|SM8750) CONFIG="InputPlumber" ;;
+    RK3566|RK3576|SM4450|SM6115|SM8250|SM8550|SM8650|SM8750|SDM845) CONFIG="InputPlumber" ;;
     *) CONFIG="${DEVICE}" ;;
   esac
 

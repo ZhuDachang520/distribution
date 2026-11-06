@@ -17,7 +17,6 @@ PKG_PATCH_DIRS="${LINUX} mainline ${DEVICE} default"
 
 [[ "${DEVICE}" =~ "RK3326|RK3399|S922X|H700" ]] && PKG_PATCH_DIRS+=" rocknix-joypad"
 [[ "${DEVICE}" == RK* ]] && PKG_PATCH_DIRS+=" mainline-rockchip"
-[[ "${DEVICE}" == SM* ]] && PKG_DEPENDS_TARGET+=" mkbootimg:host"
 
 case ${DEVICE} in
   RK3588)
@@ -27,15 +26,15 @@ case ${DEVICE} in
     PKG_GIT_CLONE_BRANCH="rk-6.1-rkr3"
     PKG_PATCH_DIRS="${LINUX} ${DEVICE} default"
     ;;
-  RK3576|RK3566)
-    PKG_VERSION="7.2.7"
-    PKG_SHA256="4ac34c47db2540ffb2713943f8d891ff1702e0ba6934525a493b7d1cad43145a"
+  RK3566|RK3576)
+    PKG_VERSION="7.2.11"
+    PKG_SHA256="fd0fc479f983a8c05313f13e9c36330fe6651cf725396748c40d5cd93fa1e6a4"
     PKG_URL="https://www.kernel.org/pub/linux/kernel/v${PKG_VERSION/.*/}.x/${PKG_NAME}-${PKG_VERSION}.tar.xz"
     PKG_PATCH_DIRS+=" 7.2.6"
     ;;
   S922X)
-    PKG_VERSION="7.2.9"
-    PKG_SHA256="b4c5dfbe51a364a6c7f03869200f88c8e1f77403539005f14b7fc6bc91b8d8ba"
+    PKG_VERSION="7.3.1"
+    PKG_SHA256="fa595aad93734f829c963c2a90ef7c3673224fd7fdae7b49406e397cde2de231"
     PKG_URL="https://www.kernel.org/pub/linux/kernel/v${PKG_VERSION/.*/}.x/${PKG_NAME}-${PKG_VERSION}.tar.xz"
     PKG_PATCH_DIRS+=" 7.2.6"
     ;;
@@ -46,7 +45,7 @@ case ${DEVICE} in
     # Note that the patch dir 7.2 is automatically added as it matches the
     # version. When we move past 7.2, remember to add 7.2 to patch dirs.
     ;;
-  RK3326|AMD64)
+  RK3326|AMD64|SDM845)
     PKG_VERSION="7.1.2"
     PKG_SHA256="37198c93727be247c9fb5309bb86cd5e496c61e5322cd8c4eca9476bb0b5883f"
     PKG_URL="https://www.kernel.org/pub/linux/kernel/v${PKG_VERSION/.*/}.x/${PKG_NAME}-${PKG_VERSION}.tar.xz"
@@ -87,7 +86,7 @@ done
 
 if [ "${DEVICE}" = "RK3326" -o "${DEVICE}" = "RK3566" ]; then
   PKG_DEPENDS_UNPACK+=" generic-dsi"
-elif [ "${DEVICE}" = "SM8250" -o "${DEVICE}" = "H700" -o "${DEVICE}" = "SM8650" -o "${DEVICE}" = "SM8750" ]; then
+elif [ "${DEVICE}" = "SM8250" -o "${DEVICE}" = "H700" -o "${DEVICE}" = "SM8650" -o "${DEVICE}" = "SM8750" -o "${DEVICE}" = "SDM845" ]; then
   PKG_DEPENDS_UNPACK+=" kernel-firmware"
 fi
 
@@ -222,6 +221,20 @@ pre_make_target() {
       cp -Lv $(get_build_dir kernel-firmware)/.copied-firmware/qcom/sm8250/cdsp.mbn ${PKG_BUILD}/external-firmware/qcom/sm8250
       cp $(get_build_dir kernel-firmware)/.copied-firmware/qcom/sm8250/Thundercomm/RB5/* $(get_build_dir kernel-firmware)/.copied-firmware/qcom/sm8250/
       cp -Lv $(get_build_dir kernel-firmware)/.copied-firmware/qcom/sm8250/slpi.mbn ${PKG_BUILD}/external-firmware/qcom/sm8250
+
+    FW_LIST="$(find ${PKG_BUILD}/external-firmware -type f | sed 's|.*external-firmware/||' | sort | xargs)"
+
+    ${PKG_BUILD}/scripts/config --set-str CONFIG_EXTRA_FIRMWARE "${FW_LIST}"
+    ${PKG_BUILD}/scripts/config --set-str CONFIG_EXTRA_FIRMWARE_DIR "external-firmware"
+  elif [ "${TARGET_ARCH}" = "aarch64" -a "${DEVICE}" = "SDM845" ]; then
+    mkdir -p ${PKG_BUILD}/external-firmware/qcom/sdm845
+      cp -Lv $(get_build_dir kernel-firmware)/.copied-firmware/qcom/a630_gmu.bin ${PKG_BUILD}/external-firmware/qcom
+      cp -Lv $(get_build_dir kernel-firmware)/.copied-firmware/qcom/a630_sqe.fw ${PKG_BUILD}/external-firmware/qcom
+      cp -Lv $(get_build_dir kernel-firmware)/.copied-firmware/qcom/sdm845/a630_zap.mbn ${PKG_BUILD}/external-firmware/qcom/sdm845
+      cp -Lv $(get_build_dir kernel-firmware)/.copied-firmware/qcom/sdm845/mba.mbn ${PKG_BUILD}/external-firmware/qcom/sdm845
+      cp -Lv $(get_build_dir kernel-firmware)/.copied-firmware/qcom/sdm845/modem.mbn ${PKG_BUILD}/external-firmware/qcom/sdm845
+      cp -Lv $(get_build_dir kernel-firmware)/.copied-firmware/qcom/sdm845/adsp.mbn ${PKG_BUILD}/external-firmware/qcom/sdm845
+      cp -Lv $(get_build_dir kernel-firmware)/.copied-firmware/qcom/sdm845/cdsp.mbn ${PKG_BUILD}/external-firmware/qcom/sdm845
 
     FW_LIST="$(find ${PKG_BUILD}/external-firmware -type f | sed 's|.*external-firmware/||' | sort | xargs)"
 
@@ -391,36 +404,17 @@ make_target() {
 
 makeinstall_target() {
   mkdir -p ${INSTALL}/.image
-  cp -p System.map .config Module.symvers ${INSTALL}/.image/
-
-  if [ "${BOOTLOADER}" != "qcom-abl" ]; then
-  	cp -p arch/${TARGET_KERNEL_ARCH}/boot/${KERNEL_TARGET} ${INSTALL}/.image/
-  else
-
-    gzip -c "arch/${TARGET_KERNEL_ARCH}/boot/${KERNEL_TARGET}" > "${INSTALL}/.image/kernel.gz"
-    for dtb in "arch/${TARGET_KERNEL_ARCH}/boot/dts/"**/*.dtb; do
-      if [ -f ${dtb} ]; then
-        cat "$dtb" >> "${INSTALL}/.image/kernel.gz"
-      fi
-    done
-    echo -n "dummy" > "${INSTALL}/.image/ramdisk"
-    python3 "${TOOLCHAIN}/mkbootimg/mkbootimg.py" \
-      --kernel "${INSTALL}/.image/kernel.gz" --ramdisk "${INSTALL}/.image/ramdisk" \
-	  --kernel_offset 0x00000000 --ramdisk_offset 0x00000000 --tags_offset 0x00000000 \
-	  --os_version 12.0.0 --os_patch_level "$(date '+%Y-%m')" --header_version 0 \
-	  --cmdline "boot=LABEL=${DISTRO_BOOTLABEL} disk=LABEL=${DISTRO_DISKLABEL} ${EXTRA_CMDLINE}" \
-	  -o "${INSTALL}/.image/${KERNEL_TARGET}" || { exit 1; }
-  fi
+  cp -p arch/${TARGET_KERNEL_ARCH}/boot/${KERNEL_TARGET} System.map .config Module.symvers ${INSTALL}/.image/
 
   kernel_make INSTALL_MOD_PATH=${INSTALL}/$(get_kernel_overlay_dir) modules_install
   rm -f ${INSTALL}/$(get_kernel_overlay_dir)/lib/modules/*/build
   rm -f ${INSTALL}/$(get_kernel_overlay_dir)/lib/modules/*/source
 
   if [ "${BOOTLOADER}" = "arm-efi" ]; then
-    mkdir -p ${INSTALL}/usr/share/bootloader/boot/grub
+    mkdir -p ${INSTALL}/usr/share/bootloader/dtbs
     for dtb in arch/${TARGET_KERNEL_ARCH}/boot/dts/**/*.dtb; do
       if [ -f ${dtb} ]; then
-          cp -v ${dtb} ${INSTALL}/usr/share/bootloader/boot/grub
+        cp -v ${dtb} ${INSTALL}/usr/share/bootloader/dtbs
       fi
     done
   fi

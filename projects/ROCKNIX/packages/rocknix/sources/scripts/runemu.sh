@@ -228,6 +228,7 @@ case ${EMULATOR} in
       aarch64)
         if [[ "${CORE}" =~ pcsx_rearmed32 ]] || \
            [[ "${CORE}" =~ gpsp ]] || \
+           [[ "${CORE}" =~ yabadabadoo ]] || \
            [[ "${CORE}" =~ desmume ]]
         then
           ### Configure for 32bit Retroarch
@@ -445,6 +446,18 @@ if [ "${DEVICE_MANGOHUD_SUPPORT}" == "true" ]; then
     gpu_profiling "on"
     RUNTHIS="/usr/bin/mangohud ${RUNTHIS}"
     ${VERBOSE} && log $0 "Enabling MangoHud"
+  fi
+fi
+
+### Sway hide cursor
+if echo "${UI_SERVICE}" | grep -q "sway"; then
+  HIDE_CURSOR=$(get_setting "rocknix.sway.hide_cursor" "${PLATFORM}" "${ROMNAME##*/}")
+  if [ "${HIDE_CURSOR}" = "1" ]; then
+    ${VERBOSE} && log $0 "Enabling sway hide_cursor"
+    swaymsg "seat * hide_cursor 1000"
+  else
+    ${VERBOSE} && log $0 "Disabling sway hide_cursor"
+    swaymsg "seat * hide_cursor 0"
   fi
 fi
 
@@ -690,6 +703,9 @@ then
     systemd-run --scope --quiet --expand-environment=no --slice=background.slice -- /usr/bin/run /usr/bin/cloud_backup
   fi
 fi
+
+# Restore sway hide_cursor
+swaymsg "seat * hide_cursor 1000"
 
 ${VERBOSE} && log $0 "Checking errors: ${ret_error} "
 ### ES shows /tmp/launch_error.log as a message when the game ends with 250.
