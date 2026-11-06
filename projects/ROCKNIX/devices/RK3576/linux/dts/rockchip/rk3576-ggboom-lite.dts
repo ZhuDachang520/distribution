@@ -18,7 +18,6 @@
 /dts-v1/;
 
 #include <dt-bindings/gpio/gpio.h>
-#include <dt-bindings/input/linux-event-codes.h>
 #include <dt-bindings/leds/common.h>
 #include <dt-bindings/pinctrl/rockchip.h>
 #include <dt-bindings/soc/rockchip,vop2.h>
@@ -38,40 +37,6 @@
 
 	chosen {
 		stdout-path = "serial0:1500000n8";
-	};
-
-	/* SARADC_VIN1_KEY_RECOVERY: idles ~1.79V, button pulls to ~0.05V */
-	adc_keys_volup: adc-keys-volup {
-		compatible = "adc-keys";
-		io-channels = <&saradc 1>;
-		io-channel-names = "buttons";
-		keyup-threshold-microvolt = <1800000>;
-		poll-interval = <60>;
-
-		button-volup {
-			label = "VOLUMEUP";
-			linux,code = <KEY_VOLUMEUP>;
-			press-threshold-microvolt = <1750>;
-		};
-	};
-
-	/*
-	 * HW_ID net idles at ~0.15V and the button pulls it to 0V, so the
-	 * thresholds stay below the idle level; a 1.8V keyup threshold makes
-	 * the driver report the key held at boot and hangs the initramfs.
-	 */
-	adc_keys_voldown: adc-keys-voldown {
-		compatible = "adc-keys";
-		io-channels = <&saradc 2>;
-		io-channel-names = "buttons";
-		keyup-threshold-microvolt = <130000>;
-		poll-interval = <60>;
-
-		button-voldown {
-			label = "VOLUMEDOWN";
-			linux,code = <KEY_VOLUMEDOWN>;
-			press-threshold-microvolt = <20000>;
-		};
 	};
 
 	reserved-memory {
@@ -265,6 +230,7 @@
 		};
 	};
 
+	/* not defined in mainline rk3576.dtsi yet */
 	pwm2_8ch_3: pwm@2ade3000 {
 		compatible = "rockchip,rk3576-pwm";
 		reg = <0x0 0x2ade3000 0x0 0x1000>;
@@ -324,18 +290,6 @@
 	mali-supply = <&vdd_gpu_s0>;
 	resets = <&cru SRST_GPU>;
 	status = "okay";
-
-	power_model@0 {
-		compatible = "arm,mali-simple-power-model";
-		static-coefficient = <100000>;
-		dynamic-coefficient = <953>;
-		ts = <(-108890) 63610 (-1355) 20>;
-		thermal-zone = "gpu-thermal";
-	};
-	power_model@1 {
-		compatible = "arm,mali-g52-power-model";
-		scale = <5>;
-	};
 };
 
 &hdmi {
@@ -765,7 +719,7 @@
 	vccq-supply = <&vcc1v2_ufs_vccq_s0>;
 	vccq2-supply = <&vcc1v8_ufs_vccq2_s0>;
 	reset-gpios = <&gpio4 RK_PD0 GPIO_ACTIVE_HIGH>;
-	status = "okay";
+	status = "disabled";
 };
 
 &u2phy0 {

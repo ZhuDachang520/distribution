@@ -95,7 +95,7 @@
       <file>rk3568-anbernic-rg-ds-plus</file>
     </Specific>
   </RK3566>
-  <RK3576 mkimage_options="dtb,extlinux,uboot" fdt="device_trees/rk3576-ggboom-zero-mini.dtb" fdt_type="fdt" dtb_prefix="rockchip">
+  <RK3576 mkimage_options="dtb,extlinux,uboot" fdt="device_trees/rk3576-ggboom-lite.dtb" fdt_type="fdt" dtb_prefix="rockchip">
     <file>rk3576-anbernic-rg-vita-pro</file>
     <file>rk3576-ggboom-zero-mini</file>
     <file>rk3576-ggboom-lite</file>
