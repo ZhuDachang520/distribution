@@ -1,0 +1,22 @@
+--- a/es-app/src/main.cpp
++++ b/es-app/src/main.cpp
+@@ -892,10 +892,17 @@
+ 	while (window.peekGui() != nullptr)
+ 		delete window.peekGui();
+ 
+-	window.deinit();
+-
++	/*
++	 * Issue the reboot/shutdown request before tearing the renderer down.
++	 * SDL_Quit() deadlocks on this hardware often enough to matter (black
++	 * screen, process stuck in a condvar wait), and running processQuitMode
++	 * after it means the system is never told to go down. Metadata is
++	 * already saved at this point.
++	 */
+ 	Utils::Platform::processQuitMode();
+ 
++	window.deinit();
++
+ 	LOG(LogInfo) << "EmulationStation cleanly shutting down.";
+ 
+ 	Log::flush();
