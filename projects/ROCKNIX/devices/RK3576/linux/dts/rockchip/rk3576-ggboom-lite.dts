@@ -366,8 +366,10 @@
 };
 
 &uart7 {
+	assigned-clocks = <&cru SCLK_UART7>;
+	assigned-clock-rates = <24000000>;
 	pinctrl-names = "default";
-	pinctrl-0 = <&uart7m0_xfer &uart7m0_ctsn>;
+	pinctrl-0 = <&uart7m0_xfer &uart7m0_ctsn &uart7m0_rtsn>;
 	status = "okay";
 };
 
